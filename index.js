@@ -1,3 +1,5 @@
+// for node module
+
 // create constructor
 var filtr = function() {
     this.config = {
@@ -17,6 +19,8 @@ filtr.prototype.addStore = function(id, opts) {
 
 // basic filter function, takes an id, opts, and callbacks for success and fail
 filtr.prototype.limit = function(id, opts, success, fail) {
+    
+    //TODO: err check user inputs
     
     opts = opts || {};
     opts.limitCount = opts.limitCount || this.config.limitCount;
@@ -44,6 +48,8 @@ filtr.prototype.limit = function(id, opts, success, fail) {
 // basic queue function, takes id, opts, function callback and queue ended callback
 filtr.prototype.queue = function(id, opts, callback, end) {
 
+    //TODO: err check user inputs
+    
     this.qRunning[id] = this.qRunning[id] || false;
 
     opts = opts || {};
