@@ -1,0 +1,173 @@
+<html><head><title>Filtr</title>
+<script>
+/***** Begin Filtr Code *****/
+// create constructor
+var filtr = function() {
+    this.config = {
+        limitCount: 3,
+        limitTime: 1000, 
+        queueTimer: 1000
+    };
+    this.dataStore = {};
+    this.lastQueue = {};
+    this.qRunning = {}; 
+};
+
+// simple function to add an item to a dataStore object where id = obj.key and opts = json options
+filtr.prototype.addStore = function(id, opts) {
+    (this.dataStore[id] = this.dataStore[id] || []).push(opts); 
+};
+
+// basic filter function, takes an id, opts, and callbacks for success and fail
+filtr.prototype.limit = function(id, opts, success, fail) {
+    
+    opts = opts || {};
+    opts.limitCount = opts.limitCount || this.config.limitCount;
+    opts.limitTime = opts.limitTime || this.config.limitTime;
+    
+    var now = Date.now();
+
+    this.addStore(id, {ts:now});
+    
+    for (var i = this.dataStore[id].length - 1; i >=0; i--) {
+        if ((this.dataStore[id][i].ts + opts.limitTime) < now) {
+            this.dataStore[id].splice(i, 1);
+        }
+    }
+    
+    if (this.dataStore[id].length > opts.limitCount) {
+        return fail();
+    }
+    else {
+        return success();
+    }
+            
+};
+
+// basic queue function, takes id, opts, function callback and queue ended callback
+filtr.prototype.queue = function(id, opts, callback, end) {
+
+    this.qRunning[id] = this.qRunning[id] || false;
+
+    opts = opts || {};
+    opts.queueTimer = opts.queueTimer || this.config.queueTimer;
+    
+    var now = Date.now();
+    
+    // just add to the array 
+    this.addStore(id, {ts:now, action:callback, stop:end});
+
+    // check the queue now to see if we need to kick start it
+    if (!(this.qRunning[id])) {
+        this.runQueue(id);
+    }
+
+};
+
+// function run by queue to actually execute the queue
+filtr.prototype.runQueue = function(id) {
+
+    var self = this;
+    // if anything is in dataStore, run the queue
+    if (this.dataStore[id].length > 0) {
+        this.qRunning[id] = true;
+        setTimeout(function() { 
+            // run the first item in the array
+            self.dataStore[id][0].action();
+            self.lastQueue[id] = self.dataStore[id][0];
+            // shift it out
+            self.dataStore[id].shift();
+            // run this function again 
+            self.runQueue(id);
+        }, self.config.queueTimer);
+    }
+    else {
+        this.qRunning[id] = false; 
+        this.lastQueue[id].stop();
+    }
+ 
+};
+/***** End Filtr *****/
+
+
+var filt = new filtr();
+
+
+var generateRandom = function generateRandom(start, count) {   
+    var amount = count || 100;
+    var begin = start || 0;
+    return Math.floor(Math.exp(Math.random()*Math.log(count+1)))+start;
+};
+
+
+var runFunc = function() {
+
+    var state = document.getElementById("state");
+
+    filt.limit("derp", {}, function() {  
+        console.log("Allow action"); 
+        var node = document.createElement("LI");                 
+        var textnode = document.createTextNode(generateRandom(0,10000000000000));   
+        var container =  document.getElementById("filterResult");
+        node.appendChild(textnode);                              
+        container.insertBefore(node, container.firstChild);           
+        state.innerHTML = "Status: OK";   
+    }, function() { 
+        console.log("Rate limit exceeded");
+        state.innerHTML = "You're going too fast!";
+    });  
+  
+};
+
+
+var qFunc = function() {
+
+    var qstate = document.getElementById("qstate");
+
+    filt.queue("herp", {queueTimer:500}, function() {
+        console.log("Allow action"); 
+        var node = document.createElement("LI");                 
+        var textnode = document.createTextNode(generateRandom(0,10000000000000));   
+        var container =  document.getElementById("qResult");
+        node.appendChild(textnode);                              
+        container.insertBefore(node, container.firstChild);           
+        qstate.innerHTML = "Queue Running: " + filt.qRunning["herp"] + 
+            "<br>Queue Items: " + filt.dataStore["herp"].length;    
+    },
+    function() { 
+        console.log("Queue stopped");
+        qstate.innerHTML = "Queue Running: " + filt.qRunning["herp"]; 
+    });
+};
+
+</script>
+
+</head>
+<body>
+
+<center><h2>Limit</h2></center>
+<table align="center" width="800"><tr><td>
+    <div id="filterResult" style="width:400px;height:300px;overflow:scroll"></div>
+</td>
+<td>
+    <div id="state">Status: OK</div>
+</td></tr></table>
+
+<center>
+    <button id="runner" onClick="runFunc()">Run Function</button>
+</center>
+
+<center><h2>Queue</h2></center>
+<table align="center" width="800"><tr><td>
+    <div id="qResult" style="width:400px;height:300px;overflow:scroll"></div>
+</td>
+<td>
+    <div id="qstate">Queue Running: false</div>
+</td></tr></table>
+
+<center>
+    <button id="qRunner" onClick="qFunc()">Run Function</button>
+</center>
+
+</body>
+</html>
