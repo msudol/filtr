@@ -1,4 +1,4 @@
-// QFiltr for node.js
+// QFiltr for javascript / html usage
 
 // create constructor
 var qfilter = function() {
@@ -107,5 +107,3 @@ qfilter.prototype.runQueue = function(id, init) {
     }
  
 };
-
-module.exports = qfilter;

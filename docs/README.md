@@ -17,17 +17,24 @@ See how to embed in javascript in /test/basic-test.html
 
 ## Basic Usage
 
-qfiltr. limit||queue||filter  (id, opts, callback(s))
+qfiltr.<COMMAND>("id", {options}, callback(s))
 
-* qfiltr.limit: basic hard limit, anything over x messages in y seconds returns the fail callback
-** opts object defaults
-*** limitCount:3
-*** limitTime:1000
+### qfiltr.limit: 
 
-* qfiltr.queue: basic queueing function, feed messages in at any rate, and they are processed at the queue settings
-** opts object defaults
-*** queueTimer:1000
+Limit is a basic hard limit, where anything over X messages in Y seconds returns the fail callback, while anything that is under the limit returns the success callback.
 
-* qfiltr.filter: TODO - pass filter regex / matching conditions along with message 
+- Options Object
+  - limitCount:3
+  - limitTime:1000
 
-* qfilter.qlimit: TODO - combination of queue and limiting in one function
+### qfiltr.queue: 
+
+Queue is basic queueing function, feed messages in at any rate, and they are processed at the queue settings rate until the queue runs out.
+
+- Options Object
+  - queueTimer:1000
+
+### TODO
+- qfiltr.filter: pass filter regex / matching conditions along with message 
+
+- qfilter.qlimit: combination of queue and limiting in one function 
