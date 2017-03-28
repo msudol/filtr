@@ -1,6 +1,6 @@
 # QFiltr
 
-QFilter is a powerful but simple filter, limiter & queueing system that can be used to moderate or maintain a data stream.
+QFiltr is a powerful but simple filter, limiter & queueing system that can be used to moderate or maintain a data stream.
 
 Some use cases:
 - Use within an API in order to rate limit incoming requests.
