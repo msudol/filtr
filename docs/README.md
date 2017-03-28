@@ -17,7 +17,7 @@ See how to embed in javascript in /test/basic-test.html
 
 ## Basic Usage
 
-qfiltr.<COMMAND>("id", {options}, callback(s))
+qfiltr.COMMAND("id", {options}, callback(s))
 
 ### qfiltr.limit: 
 
