@@ -8,14 +8,13 @@ Some use cases:
 
 ## Installation
 
-QFilter can be installed for use in a Node.js application via NPM, or for use in a basic javascript application or website by getting the standalone qfiltr.js from the GitHub Repository. 
+QFiltr can be installed for use in a Node.js application via NPM, or for use in a basic javascript application or website by getting the standalone qfiltr.js from the GitHub Repository. 
 
 ### NPM
 
+```bash
 npm install qfiltr
-
-var qfiltr = require("qfiltr");
-var myQfiltr = new qfiltr();
+```
 
 ### Javascript
 
@@ -26,7 +25,12 @@ Get the standalone version from https://github.com/msudol/qfiltr
 
 ## Basic Usage
 
+```js
+var qfiltr = require("qfiltr");
+var qFiltr = new qfiltr();
+
 qfiltr.COMMAND("id", {options}, callback(s))
+```
 
 ### qfiltr.limit: 
 
@@ -46,4 +50,4 @@ Queue is basic queueing function, feed messages in at any rate, and they are pro
 ### TODO
 - qfiltr.filter: pass filter regex / matching conditions along with message 
 
-- qfilter.qlimit: combination of queue and limiting in one function 
+- qfiltr.qlimit: combination of queue and limiting in one function 

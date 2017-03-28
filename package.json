@@ -1,12 +1,23 @@
 {
 	"name":"qfiltr",
 	"version":"0.0.3",
-	"description":"A javascript filter & queue system.",
-    "main" : "index.js",
+	"description":"A simple and powerful javascript filter, rate limit & queue system for data streams, APIs and other integrations.",
+    "keywords": [
+    	"filtr",
+    	"filter",
+    	"queue",
+    	"limit",
+    	"rate limit"
+	],
+	"main": "index.js",
 	"author":"Matthew Sudol",
-	"url":"https://github.com/msudol/qfiltr",
-    "repository" : { 
-        "type" : "git", 
-        "url" : "https://github.com/msudol/qfiltr.git"
-    }    
+	"homepage":"https://msudol.github.io/qfiltr/",
+    "repository": { 
+        "type": "git", 
+        "url": "https://github.com/msudol/qfiltr.git"
+    },
+	"bugs": {
+    	"url": "https://github.com/msudol/qfiltr/issues"
+    }
+      
 }
