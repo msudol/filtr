@@ -12,7 +12,7 @@ QFilter can be installed for use in a Node.js application via NPM, or for use in
 
 ### NPM
 
-npm install qfilter
+npm install qfiltr
 
 var qfiltr = require("qfiltr");
 var myQfiltr = new qfiltr();
