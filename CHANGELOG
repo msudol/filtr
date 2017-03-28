@@ -1,3 +1,7 @@
+v0.0.3
+- Renamed some functions that were mis-typed and the module.exports from qfilter ==> qfiltr
+- Working on better documentation
+
 v0.0.2
 - Updated README
 - Fixed bug in the queue options where global limit wasn't overridden
