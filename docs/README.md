@@ -1,19 +1,28 @@
 # QFiltr
 
-QFilter is a simple a simple filter, limiter & queueing system that any function can call into in order to moderator or maintain a data stream.
+QFilter is a powerful but simple filter, limiter & queueing system that can be used to moderate or maintain a data stream.
 
+Some use cases:
+- Use within an API in order to rate limit incoming requests.
+- Use with UI interactions, like a button that can be rapidly pressed, to run a function via queue or rate limit.
 
 ## Installation
 
-QFilter can be installed for Node.js or in javascript 
+QFilter can be installed for use in a Node.js application via NPM, or for use in a basic javascript application or website by getting the standalone qfiltr.js from the GitHub Repository. 
 
 ### NPM
 
-npm install qfilter (coming soon)
+npm install qfilter
+
+var qfiltr = require("qfiltr");
+var myQfiltr = new qfiltr();
 
 ### Javascript
 
-See how to embed in javascript in /test/basic-test.html
+Get the standalone version from https://github.com/msudol/qfiltr
+
+- Standalone version is in /tests/qfiltr.js
+- See how to embed in javascript in /tests/basic-test.html
 
 ## Basic Usage
 

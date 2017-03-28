@@ -1,7 +1,7 @@
 // QFiltr for javascript / html usage
 
 // create constructor
-var qfilter = function() {
+var qfiltr = function() {
     this.config = {
         limitCount: 3,
         limitTime: 1000, 
@@ -13,12 +13,12 @@ var qfilter = function() {
 };
 
 // simple function to add an item to a dataStore object where id = obj.key and opts = json options
-qfilter.prototype.addStore = function(id, opts) {
+qfiltr.prototype.addStore = function(id, opts) {
     (this.dataStore[id] = this.dataStore[id] || []).push(opts); 
 };
 
 // basic filter function, takes an id, opts, and callbacks for success and fail
-qfilter.prototype.limit = function(id, opts, success, fail) {
+qfiltr.prototype.limit = function(id, opts, success, fail) {
     
     //TODO: err check user inputs
     
@@ -46,7 +46,7 @@ qfilter.prototype.limit = function(id, opts, success, fail) {
 };
 
 // basic queue function, takes id, opts, function callback and queue ended callback
-qfilter.prototype.queue = function(id, opts, callback, end) {
+qfiltr.prototype.queue = function(id, opts, callback, end) {
 
     //TODO: err check user inputs
     
@@ -68,7 +68,7 @@ qfilter.prototype.queue = function(id, opts, callback, end) {
 };
 
 // function run by queue to actually execute the queue
-qfilter.prototype.runQueue = function(id, init) {
+qfiltr.prototype.runQueue = function(id, init) {
 
     var self = this;
     
