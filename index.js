@@ -1,7 +1,7 @@
 // for node module
 
 // create constructor
-var filtr = function() {
+var qfilter = function() {
     this.config = {
         limitCount: 3,
         limitTime: 1000, 
@@ -13,12 +13,12 @@ var filtr = function() {
 };
 
 // simple function to add an item to a dataStore object where id = obj.key and opts = json options
-filtr.prototype.addStore = function(id, opts) {
+qfilter.prototype.addStore = function(id, opts) {
     (this.dataStore[id] = this.dataStore[id] || []).push(opts); 
 };
 
 // basic filter function, takes an id, opts, and callbacks for success and fail
-filtr.prototype.limit = function(id, opts, success, fail) {
+qfilter.prototype.limit = function(id, opts, success, fail) {
     
     //TODO: err check user inputs
     
@@ -46,7 +46,7 @@ filtr.prototype.limit = function(id, opts, success, fail) {
 };
 
 // basic queue function, takes id, opts, function callback and queue ended callback
-filtr.prototype.queue = function(id, opts, callback, end) {
+qfilter.prototype.queue = function(id, opts, callback, end) {
 
     //TODO: err check user inputs
     
@@ -68,7 +68,7 @@ filtr.prototype.queue = function(id, opts, callback, end) {
 };
 
 // function run by queue to actually execute the queue
-filtr.prototype.runQueue = function(id) {
+qfilter.prototype.runQueue = function(id) {
 
     var self = this;
     // if anything is in dataStore, run the queue
@@ -91,4 +91,4 @@ filtr.prototype.runQueue = function(id) {
  
 };
 
-module.exports = filtr;
+module.exports = qfilter;
