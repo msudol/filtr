@@ -1,11 +1,17 @@
-// QFiltr for javascript / html usage
+/**
+ * QFiltr - A simple, yet powerful filter, limit, and queue system in javascript
+ * @license Apache-2.0
+ *
+ *  https://github.com/msudol/qfiltr 
+ */
 
 // create constructor
 var qfiltr = function() {
     this.config = {
         limitCount: 3,
         limitTime: 1000, 
-        queueTimer: 1000
+        queueTimer: 1000,
+        queueMax: -1
     };
     this.dataStore = {};
     this.lastQueue = {};
@@ -46,7 +52,7 @@ qfiltr.prototype.limit = function(id, opts, success, fail) {
 };
 
 // basic queue function, takes id, opts, function callback and queue ended callback
-qfiltr.prototype.queue = function(id, opts, callback, end) {
+qfiltr.prototype.queue = function(id, opts, callback, end, maxed) {
 
     //TODO: err check user inputs
     
@@ -54,12 +60,20 @@ qfiltr.prototype.queue = function(id, opts, callback, end) {
 
     opts = opts || {};
     opts.queueTimer = opts.queueTimer || this.config.queueTimer;
+    opts.queueMax  = opts.queueMax || this.config.queueMax;
     
     var now = Date.now();
     
-    // just add to the array 
-    this.addStore(id, {ts:now, opts:opts, action:callback, stop:end});
-
+    // is the store for this ID at max? 
+    if ((this.dataStore[id] !== undefined) && (opts.queueMax > -1) && (this.dataStore[id].length >= opts.queueMax)) {
+        // if a queueMax was reached run callback if it is defined
+        typeof maxed === 'function' && maxed();
+    }    
+    else {
+        // add message to the queue
+        this.addStore(id, {ts:now, opts:opts, action:callback, stop:end});
+    }
+    
     // check the queue now to see if we need to kick start it
     if (!(this.qRunning[id])) {
         this.runQueue(id, true);
