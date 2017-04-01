@@ -23,7 +23,7 @@ qfiltr.prototype.addStore = function(id, opts) {
     (this.dataStore[id] = this.dataStore[id] || []).push(opts); 
 };
 
-// basic filter function, takes an id, opts, and callbacks for success and fail
+// basic limit function, takes an id, opts, and callbacks for success and fail
 qfiltr.prototype.limit = function(id, opts, success, fail) {
     
     //TODO: err check user inputs
@@ -52,7 +52,7 @@ qfiltr.prototype.limit = function(id, opts, success, fail) {
 };
 
 // basic queue function, takes id, opts, function callback and queue ended callback
-qfiltr.prototype.queue = function(id, opts, callback, end, maxed) {
+qfiltr.prototype.queue = function(id, opts, success, end, maxed) {
 
     //TODO: err check user inputs
     
@@ -71,7 +71,7 @@ qfiltr.prototype.queue = function(id, opts, callback, end, maxed) {
     }    
     else {
         // add message to the queue
-        this.addStore(id, {ts:now, opts:opts, action:callback, stop:end});
+        this.addStore(id, {ts:now, opts:opts, action:success, stop:end});
     }
     
     // check the queue now to see if we need to kick start it
@@ -79,6 +79,55 @@ qfiltr.prototype.queue = function(id, opts, callback, end, maxed) {
         this.runQueue(id, true);
     }
 
+};
+
+
+// combo limit, then queue function, takes an id, opts, and callbacks for success, fail, end and maxed
+qfiltr.prototype.qlimit = function(id, opts, success, fail, end, maxed) {
+       
+    this.qRunning[id] = this.qRunning[id] || false;
+       
+    opts = opts || {};
+    opts.limitCount = opts.limitCount || this.config.limitCount;
+    opts.limitTime = opts.limitTime || this.config.limitTime;
+    opts.queueTimer = opts.queueTimer || this.config.queueTimer;
+    opts.queueMax  = opts.queueMax || this.config.queueMax;    
+    
+    var now = Date.now();
+
+    // is the store for this ID at max? 
+    if ((this.dataStore[id] !== undefined) && (opts.queueMax > -1) && (this.dataStore[id].length >= opts.queueMax)) {
+        // if a queueMax was reached run callback if it is defined
+        typeof maxed === 'function' && maxed();
+    }    
+    else {
+        this.addStore(id, {ts:now, opts:opts, action:success, stop:end});
+    }
+    
+    // need to check if this function has gone into queue mode or not here
+    if (!(this.qRunning[id])) {
+    
+        // this is the limiter check
+        for (var i = this.dataStore[id].length - 1; i >=0; i--) {
+            if ((this.dataStore[id][i].ts + opts.limitTime) < now) {
+                this.dataStore[id].splice(i, 1);
+            }
+        }
+        
+        // Limit fail - time to start queueing
+        if (this.dataStore[id].length > opts.limitCount) {
+            // we'll want to add to a queue here
+            this.runQueue(id, true); 
+            // run the callback if set
+            return fail();
+        }
+        // Within limits and the queue is not running.. yay!
+        else {
+            return success();
+        }
+        
+    }
+            
 };
 
 // function run by queue to actually execute the queue

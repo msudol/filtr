@@ -21,7 +21,7 @@ var runFunc = function() {
     var state = document.getElementById("state");
 
     // call filt.limit to test limiter using options 
-    filt.limit("derp", {}, function() {  
+    filt.limit("limitTest", {}, function() {  
         console.log("Allow action"); 
         var node = document.createElement("LI");                 
         var textnode = document.createTextNode(generateRandom(0,10000000000000));   
@@ -41,19 +41,19 @@ var qFunc = function() {
 
     var qstate = document.getElementById("qstate");
 
-    filt.queue("herp", {queueTimer:1000, queueMax:20}, function() {
+    filt.queue("queueTest", {queueTimer:1000, queueMax:20}, function() {
         console.log("Allow action"); 
         var node = document.createElement("LI");                 
         var textnode = document.createTextNode(generateRandom(0,10000000000000));   
         var container =  document.getElementById("qResult");
         node.appendChild(textnode);                              
         container.insertBefore(node, container.firstChild);           
-        qstate.innerHTML = "Queue Running: " + filt.qRunning["herp"] + 
-            "<br>Queue Items: " + filt.dataStore["herp"].length;    
+        qstate.innerHTML = "Queue Running: " + filt.qRunning["queueTest"] + 
+            "<br>Queue Items: " + filt.dataStore["queueTest"].length;    
     },
     function() { 
         console.log("Queue stopped");
-        qstate.innerHTML = "Queue Running: " + filt.qRunning["herp"]; 
+        qstate.innerHTML = "Queue Running: " + filt.qRunning["queueTest"]; 
     }, 
     function() {
         console.log("Queue maxed out!");
@@ -61,6 +61,30 @@ var qFunc = function() {
     });
 };
 
+
+// Function called when the Combo Run Button is pressed
+var comboFunc = function() {
+
+    var state = document.getElementById("comboState");
+
+    // call filt.limit to test limiter using options 
+    filt.qlimit("comboTest", {}, function() {  
+        console.log("Allow action"); 
+        var node = document.createElement("LI");                 
+        var textnode = document.createTextNode(generateRandom(0,10000000000000));   
+        var container =  document.getElementById("comboFilterResult");
+        node.appendChild(textnode);                              
+        container.insertBefore(node, container.firstChild);           
+        state.innerHTML = "Status: OK";   
+    }, function() { 
+        console.log("Rate limit exceeded");
+        state.innerHTML = "You're going too fast, queuing items!";
+    }, function() { 
+        console.log("Queue ended, back to rate limited");
+        state.innerHTML = "Queue ended, back to rate limited";
+    });  
+  
+};
 </script>
 
 </head>
@@ -88,6 +112,19 @@ var qFunc = function() {
 
 <center>
     <button id="qRunner" onClick="qFunc()">Run Function</button>
+</center>
+
+
+<center><h2>QLimit Combo</h2></center>
+<table align="center" width="600"><tr><td>
+    <div id="comboFilterResult" style="width:300px;height:200px;overflow:scroll"></div>
+</td>
+<td>
+    <div id="comboState">Status: OK</div>
+</td></tr></table>
+
+<center>
+    <button id="comboRunner" onClick="comboFunc()">Run Function</button>
 </center>
 
 </body>
