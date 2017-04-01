@@ -1,3 +1,9 @@
+v0.0.5
+- Fixed bug in qlimit combo function that was resending the datastore when going into queue mode
+
+v0.0.4
+- Added the qlimit combo function
+
 v0.0.3
 - Renamed some functions that were mis-typed and the module.exports from qfilter ==> qfiltr
 - Working on better documentation
