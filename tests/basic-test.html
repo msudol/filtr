@@ -6,7 +6,7 @@
 <script type="text/javascript">
 
 // create instance of qfiltr
-var filt = new qfiltr();
+var qFiltr = new qfiltr();
 
 // a random number generator to excersize the functions
 var generateRandom = function generateRandom(start, count) {   
@@ -20,8 +20,8 @@ var runFunc = function() {
 
     var state = document.getElementById("state");
 
-    // call filt.limit to test limiter using options 
-    filt.limit("limitTest", {}, function() {  
+    // call qFiltr.limit to test limiter using options 
+    qFiltr.limit("limitTest", {}, function() {  
         console.log("Allow action"); 
         var node = document.createElement("LI");                 
         var textnode = document.createTextNode(generateRandom(0,10000000000000));   
@@ -41,19 +41,19 @@ var qFunc = function() {
 
     var qstate = document.getElementById("qstate");
 
-    filt.queue("queueTest", {queueTimer:1000, queueMax:20}, function() {
+    qFiltr.queue("queueTest", {queueTimer:1000, queueMax:20}, function() {
         console.log("Allow action"); 
         var node = document.createElement("LI");                 
         var textnode = document.createTextNode(generateRandom(0,10000000000000));   
         var container =  document.getElementById("qResult");
         node.appendChild(textnode);                              
         container.insertBefore(node, container.firstChild);           
-        qstate.innerHTML = "Queue Running: " + filt.qRunning["queueTest"] + 
-            "<br>Queue Items: " + filt.dataStore["queueTest"].length;    
+        qstate.innerHTML = "Queue Running: " + qFiltr.qRunning["queueTest"] + 
+            "<br>Queue Items: " + qFiltr.dataStore["queueTest"].length;    
     },
     function() { 
         console.log("Queue stopped");
-        qstate.innerHTML = "Queue Running: " + filt.qRunning["queueTest"]; 
+        qstate.innerHTML = "Queue Running: " + qFiltr.qRunning["queueTest"]; 
     }, 
     function() {
         console.log("Queue maxed out!");
@@ -62,29 +62,53 @@ var qFunc = function() {
 };
 
 
-// Function called when the Combo Run Button is pressed
-var comboFunc = function() {
+
+var sendStop = 0
+var overRate = false;
+var testAdjuster = 0;
+
+// send messages at random intervals
+function sender(t) { 
+    if (sendStop > 100) return;
+    sendStop++;
+    
+    if (overRate) { testAdjuster = 20 }
+    else { testAdjuster = 0}
+    
+    var messageNo = sendStop;
+    setTimeout(function() {
+        // generate new t
+        var i = Math.floor(Math.exp(Math.random()*Math.log(51 + testAdjuster)));
+        sendMessage("Message #" + messageNo + " sent at " + i*10 + "ms");
+        // run again
+        sender(i*10);
+    }, t || 100);
+}
+
+function sendMessage(message) {
 
     var state = document.getElementById("comboState");
 
-    // call filt.limit to test limiter using options 
-    filt.qlimit("comboTest", {}, function() {  
-        console.log("Allow action"); 
+    // add message to qFilter.queue with callback functions 
+    qFiltr.qlimit("msgQ", {limitCount:10, limitTime:1000, queueTimer:100}, function() {
+        console.log(message);
         var node = document.createElement("LI");                 
-        var textnode = document.createTextNode(generateRandom(0,10000000000000));   
+        var textnode = document.createTextNode(message);   
         var container =  document.getElementById("comboFilterResult");
         node.appendChild(textnode);                              
-        container.insertBefore(node, container.firstChild);           
-        state.innerHTML = "Status: OK";   
-    }, function() { 
-        console.log("Rate limit exceeded");
-        state.innerHTML = "You're going too fast, queuing items!";
-    }, function() { 
-        console.log("Queue ended, back to rate limited");
-        state.innerHTML = "Queue ended, back to rate limited";
+        container.insertBefore(node, container.firstChild);          
+        state.innerHTML = "Status: OK";             
+    }, function() {
+        overRate = true;
+        console.log("Rate limit exceded, queuing data");
+        state.innerHTML = "Rate limit exceded, queuing data";      
+    }, function() {
+        overRate = false;
+        console.log("Queue cleared resuming normal operation");   
+        state.innerHTML = "Queue cleared resuming normal operation";     
     });  
-  
-};
+}
+
 </script>
 
 </head>
@@ -124,7 +148,7 @@ var comboFunc = function() {
 </td></tr></table>
 
 <center>
-    <button id="comboRunner" onClick="comboFunc()">Run Function</button>
+    <button id="comboRunner" onClick="sender()">Run Function</button>
 </center>
 
 </body>

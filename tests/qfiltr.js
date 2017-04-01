@@ -116,16 +116,19 @@ qfiltr.prototype.qlimit = function(id, opts, success, fail, end, maxed) {
         
         // Limit fail - time to start queueing
         if (this.dataStore[id].length > opts.limitCount) {
-            // we'll want to add to a queue here
+           
+            typeof fail === 'function' && fail();
+
+            // need to clear the queue so the X messages leading up to the Q so
+            this.dataStore[id].splice(0, this.dataStore[id].length - 1);
+            this.lastQueue[id] = this.dataStore[id][0];
             this.runQueue(id, true); 
-            // run the callback if set
-            return fail();
+            
         }
         // Within limits and the queue is not running.. yay!
         else {
             return success();
-        }
-        
+        }  
     }
             
 };
@@ -144,7 +147,7 @@ qfiltr.prototype.runQueue = function(id, init) {
         if (init) {
             // run the first item in the array
             self.dataStore[id][0].action();
-            self.lastQueue[id] = self.dataStore[id][0];
+            self.lastQueue[id] = self.dataStore[id][0] || self.lastQueue[id];
             // shift it out
             self.dataStore[id].shift();
             setTimeout(function() { 
@@ -156,7 +159,7 @@ qfiltr.prototype.runQueue = function(id, init) {
             setTimeout(function() { 
                 // run the first item in the array
                 self.dataStore[id][0].action();
-                self.lastQueue[id] = self.dataStore[id][0];
+                self.lastQueue[id] = self.dataStore[id][0] || self.lastQueue[id];
                 // shift it out
                 self.dataStore[id].shift();
                 // run this function again 
