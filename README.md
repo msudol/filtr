@@ -114,7 +114,7 @@ QLimit is combo function combining rate limite and queueing function, feed messa
   - Queue Ended
   - Maxed (Queue is full)
 
-Example: Send 100 messages at random intervals, rate limit if it goes to fast and put into queue mode
+Example: Send 100 messages at random intervals, rate limit if it goes too fast and put into queue mode
 
 ```js
 var qfiltr = require("qfiltr")
