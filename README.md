@@ -77,8 +77,6 @@ Queue is basic queueing function, feed messages in at any rate, and they are pro
 
 Example: Queue incoming messages or commands to be run every 2000ms until they are all run
 
-Try it in RunKit: https://runkit.com/58df2419e24d040013543787/58dfe5bb2830330014a72486
-
 ```js
 var qfiltr = require("qfiltr");
 qFiltr = new qfiltr();
