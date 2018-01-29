@@ -23,7 +23,23 @@ qfiltr.prototype.addStore = function(id, opts) {
     (this.dataStore[id] = this.dataStore[id] || []).push(opts); 
 };
 
-// basic limit function, takes an id, opts, and callbacks for success and fail
+// stub out the filter function, after all this is supposed to be qfiltr 
+qfiltr.prototype.filter = function(id, opts, success, fail) {
+    
+    //TODO: write this function, what will it do exactly?  
+    //possibly limit things matching a certain regex filter that can be passed as an argument?
+};
+
+/** @function
+ * @name limit
+ * @desciption A basic limit function, takes an id, opts, and callbacks for success and fail
+ * @param {string} id - Unique ID for this function thread.
+ * @param {Object} opts - Configure options other than default.
+ * @param {integer} [opts.limitCount=3] - Max count of calls within the limitTime (default: 3).
+ * @param {integer} [opts.limitTime=1000] - Time in ms (default: 1000).
+ * @param {Function} success - Callback function for success.
+ * @param {Function} fail - Callback function for when the limit is reached.
+*/ 
 qfiltr.prototype.limit = function(id, opts, success, fail) {
     
     //TODO: err check user inputs
@@ -51,7 +67,17 @@ qfiltr.prototype.limit = function(id, opts, success, fail) {
             
 };
 
-// basic queue function, takes id, opts, function callback and queue ended callback
+/** @function
+ * @name queue 
+ * @desciption A basic queue function that takes: id, opts, function callback and queue ended callback
+ * @param {string} id - Unique ID for this function thread.
+ * @param {Object} opts - Configure options other than default.
+ * @param {integer} [opts.queueTimer=1000] - Time in ms (default: 1000).
+ * @param {integer} [opts.queueMax=-1] - Max items allowed in queue (default: -1).
+ * @param {Function} success - Callback function for success.
+ * @param {Function} end - Callback function for when the queue ends.
+ * @param {Function} maxed - Callback function for if/when the queue gets maxed.
+*/
 qfiltr.prototype.queue = function(id, opts, success, end, maxed) {
 
     //TODO: err check user inputs
