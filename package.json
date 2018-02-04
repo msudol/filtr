@@ -1,6 +1,6 @@
 {
 	"name":"qfiltr",
-	"version":"0.0.5",
+	"version":"0.0.6",
 	"description":"A simple and powerful javascript filter, rate limit & queue system for data streams, APIs and other integrations.",
     "keywords": [
     	"filtr",
