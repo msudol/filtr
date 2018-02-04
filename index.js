@@ -7,6 +7,7 @@
 
 // create constructor
 var qfiltr = function() {
+    this.version = 0.0.6;
     this.config = {
         limitCount: 3,
         limitTime: 1000, 
@@ -50,14 +51,17 @@ qfiltr.prototype.limit = function(id, opts, success, fail) {
     
     var now = Date.now();
 
+    // add to the datastore
     this.addStore(id, {ts:now});
     
+    // loop through datastore items and compare stored time vs. now
     for (var i = this.dataStore[id].length - 1; i >=0; i--) {
         if ((this.dataStore[id][i].ts + opts.limitTime) < now) {
             this.dataStore[id].splice(i, 1);
         }
     }
     
+    // if there are too many items in the datastore - start fail function
     if (this.dataStore[id].length > opts.limitCount) {
         return fail();
     }
@@ -108,9 +112,24 @@ qfiltr.prototype.queue = function(id, opts, success, end, maxed) {
 };
 
 
-// combo limit, then queue function, takes an id, opts, and callbacks for success, fail, end and maxed
+/** @function
+ * @name qlimit
+ * @desciption A combination limit and queue function, takes an id, opts, and callbacks for success, fail, end and maxed
+ * @param {string} id - Unique ID for this function thread.
+ * @param {Object} opts - Configure options other than default.
+ * @param {integer} [opts.limitCount=3] - Max count of calls within the limitTime (default: 3).
+ * @param {integer} [opts.limitTime=1000] - Time in ms (default: 1000).
+ * @param {integer} [opts.queueTimer=1000] - Time in ms (default: 1000).
+ * @param {integer} [opts.queueMax=-1] - Max items allowed in queue (default: -1). 
+ * @param {Function} success - Callback function for success.
+ * @param {Function} fail - Callback function for when the limit is reached.
+ * @param {Function} end - Callback function for when the queue ends.
+ * @param {Function} maxed - Callback function for if/when the queue gets maxed. 
+*/ 
 qfiltr.prototype.qlimit = function(id, opts, success, fail, end, maxed) {
        
+    //TODO: err check user inputs
+    
     this.qRunning[id] = this.qRunning[id] || false;
        
     opts = opts || {};
@@ -133,7 +152,7 @@ qfiltr.prototype.qlimit = function(id, opts, success, fail, end, maxed) {
     // need to check if this function has gone into queue mode or not here
     if (!(this.qRunning[id])) {
     
-        // this is the limiter check
+        // loop through datastore items and compare stored time vs. now
         for (var i = this.dataStore[id].length - 1; i >=0; i--) {
             if ((this.dataStore[id][i].ts + opts.limitTime) < now) {
                 this.dataStore[id].splice(i, 1);
@@ -145,7 +164,7 @@ qfiltr.prototype.qlimit = function(id, opts, success, fail, end, maxed) {
            
             typeof fail === 'function' && fail();
 
-            // need to clear the queue so the X messages leading up to the Q so
+            // need to clear the queue for the X messages leading up to the Q 
             this.dataStore[id].splice(0, this.dataStore[id].length - 1);
             this.lastQueue[id] = this.dataStore[id][0];
             this.runQueue(id, true); 
@@ -158,6 +177,7 @@ qfiltr.prototype.qlimit = function(id, opts, success, fail, end, maxed) {
     }
             
 };
+
 
 // function run by queue to actually execute the queue
 qfiltr.prototype.runQueue = function(id, init) {
@@ -197,6 +217,8 @@ qfiltr.prototype.runQueue = function(id, init) {
         this.qRunning[id] = false; 
         this.lastQueue[id].stop();
     }
- 
+    
 };
+
+
 module.exports = qfiltr;
