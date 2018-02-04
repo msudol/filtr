@@ -1,10 +1,12 @@
 # QFiltr
 
-QFiltr is a powerful but simple filter, limiter & queueing system that can be used to moderate or maintain a data stream.
+QFiltr is a powerful but simple filter, limiter & queueing system that can be used to moderate or maintain a data stream. It was developed as part of a M2M/IoT cloud project in order to prevent devices from reporting data at too high rate, but has since been adapted as a standalone module for many possible uses.
 
 Some use cases:
 - Use within an API in order to rate limit incoming requests.
 - Use with UI interactions, like a button that can be rapidly pressed, to run a function via queue or rate limit.
+- Use on a chat server, to detect and block spam.
+- Use with M2M/IoT Cloud Data to limit or queue devices that report too rapidly.
 
 
 ## Installation
@@ -99,7 +101,7 @@ function sendMessage(message) {
 
 #### qfiltr.qlimit: 
 
-QLimit is combo function combining rate limite and queueing function, feed messages in at any rate until they exceed the rate limit, and then they are processed at the queue settings rate until the queue runs out.
+QLimit is combo function combining rate limiting and queueing function, feed messages in at any rate until they exceed the rate limit, and then they are processed at the queue settings rate until the queue runs out.
 
 - Options Object:
   - limitCount:3
@@ -155,18 +157,22 @@ function sendMessage(message) {
 sender(1000);
 ```
 
+#### qfilter.filter:
+
+The filter function is in development, and it's design will be tailored more toward something like a chat server, in which a condition will need to be met in order for the message to be allowed.
+
 
 ### Objects
 
 The ID that you set in a filter function writes an entry into a "datastore", so that you can have multiple filters running with different settings.
 
-This ID will also allow you check if the current ID's queue is running or not.
+This ID will also allow you to check if the current ID's queue is running or not.
 
 
 #### Accessing the datastore
 
 ```js
-var idStore = qFilter.dataSTore[ID];
+var idStore = qFilter.dataStore[ID];
 console.log("Items current in queue:" + idStore.length);
 ```
 
